@@ -1,21 +1,18 @@
 from rest_framework import generics
 from .models import Women
-from .serializers import WomenSerializer
-
-# class WomenAPIView(generics.ListAPIView):
-#     queryset = Women.objects.all()
-#     serializer_class = WomenSerializer
-    
+from .serializers import WomenSerializer   
     
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.forms import model_to_dict
+
+
+class WomenListAPIView(generics.ListCreateAPIView):
+    queryset = Women.objects.all()
+    serializer_class = WomenSerializer
+    
     
 class WomenAPIView(APIView):
-    # def get(self, request):
-    #     lst = Women.objects.all().values()
-    #     return Response({'posts': list(lst)})
-    
     
     def get(self, request):
         w = Women.objects.all()
@@ -38,6 +35,13 @@ class WomenAPIView(APIView):
         serializer.delete(instance)
         return Response({"success": "Object deleted successfully"})
 
+# class WomenAPIView(generics.ListAPIView):
+#     queryset = Women.objects.all()
+#     serializer_class = WomenSerializer
+
+    # def get(self, request):
+    #     lst = Women.objects.all().values()
+    #     return Response({'posts': list(lst)})
         
         # post_new = Women.objects.create(
         #     title = request.data['title'],
