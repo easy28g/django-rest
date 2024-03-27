@@ -3,8 +3,8 @@ from django.urls import path, include
 from women.views import WomenViewSet
 from rest_framework import routers
 
-router = routers.SimpleRouter()
-router.register(r'women', WomenViewSet)
+router = routers.DefaultRouter()
+router.register(r'women', WomenViewSet, basename='women')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
