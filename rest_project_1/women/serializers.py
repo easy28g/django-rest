@@ -3,6 +3,7 @@ from rest_framework import serializers
 from .models import Women
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
+from rest_framework.response import Response
 
 # class WomenModel:
 #     def __init__(self, title, content):
@@ -17,6 +18,40 @@ class WomenSerializer(serializers.Serializer):
     time_update = serializers.DateTimeField(read_only=True)
     is_published = serializers.BooleanField(default=True)
     cat_id = serializers.IntegerField()
+    
+    
+    def create(self, validated_data):
+        return Women.objects.create(**validated_data)
+    
+    def update(self, instance, validated_data):
+        instance.title = validated_data.get("title", instance.title)
+        instance.content = validated_data.get("content", instance.content)
+        instance.time_update = validated_data.get("time_update", instance.time_update)
+        instance.is_published = validated_data.get("is_published", instance.is_published)
+        instance.cat_id = validated_data.get("cat_id", instance.cat_id)
+        instance.save()
+        return instance
+    
+    
+    def put(self, request, *args, **kwargs):
+        pk = kwargs.get("pk", None)
+        if not pk:
+            return Response({"error": "Method PUT not allowed"})
+        
+        try:
+            instance = Women.objects.get(pk=pk)
+        except:
+            return Response({"error": "Object does not exists"})
+        
+        serializers = WomenSerializer(data=request.data, instance=instance)
+        serializers.is_valid(raise_exception=True)
+        serializers.save()
+        return Response({"post": serializers.data})
+    
+    def delete(self, instance):
+        instance.delete()
+        return instance
+
     
     
 # def encode():

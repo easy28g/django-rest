@@ -16,6 +16,7 @@ class WomenAPIView(APIView):
     #     lst = Women.objects.all().values()
     #     return Response({'posts': list(lst)})
     
+    
     def get(self, request):
         w = Women.objects.all()
         return Response({'posts': WomenSerializer(w, many=True).data})
@@ -23,11 +24,25 @@ class WomenAPIView(APIView):
     def post(self, request):
         serializer = WomenSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response({'post': serializer.data})
+    
+    
+    def delete(self, request, pk):
+        try:
+            instance = Women.objects.get(pk=pk)
+        except Women.DoesNotExist:
+            return Response({"error": "Object does not exist"})
         
-        post_new = Women.objects.create(
-            title = request.data['title'],
-            content = request.data['content'],
-            cat_id = request.data['cat_id'],    
-        )
+        serializer = WomenSerializer(data=request.data)
+        serializer.delete(instance)
+        return Response({"success": "Object deleted successfully"})
+
+        
+        # post_new = Women.objects.create(
+        #     title = request.data['title'],
+        #     content = request.data['content'],
+        #     cat_id = request.data['cat_id'],    
+        # )
         # return Response({'post': model_to_dict(post_new)})
-        return Response({'post': WomenSerializer(post_new).data})
+        # return Response({'post': WomenSerializer(post_new).data})
